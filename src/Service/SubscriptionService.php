@@ -38,16 +38,13 @@ class SubscriptionService
         $this->mailer = $mailer;
     }
 
-    public function activateAndSendMail(User $user)
+    public function activateAndSendMail(User $user): void
     {
         $subscriptionRepo = $this->entityManager->getRepository(Subscription::class);
         /**
          * @var SubscriptionRepository $subscriptionRepo
          */
 
-        $subs = $subscriptionRepo->getNotPaidSubscriptions();
-        $i = 3;
-        return;
         try {
             $subscription = $subscriptionRepo->findNewByUser($user->getId());
         } catch (NonUniqueResultException $e) {
@@ -62,7 +59,23 @@ class SubscriptionService
         $this->sendMail($user);
     }
 
-    protected function sendMail(User $user)
+    public function cancelOldSubscriptions(): void
+    {
+        $subscriptionRepo = $this->entityManager->getRepository(Subscription::class);
+        /**
+         * @var SubscriptionRepository $subscriptionRepo
+         */
+
+        $subscriptions = $subscriptionRepo->getNotPaidSubscriptions();
+        foreach ($subscriptions as $subscription) {
+            $subscription->deactivate();
+            $this->entityManager->persist($subscription);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    protected function sendMail(User $user): void
     {
         //$this->mailer->send();
     }

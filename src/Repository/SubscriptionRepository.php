@@ -35,6 +35,9 @@ class SubscriptionRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @return Subscription[]
+     */
     public function getNotPaidSubscriptions()
     {
         return $this->createQueryBuilder('s')

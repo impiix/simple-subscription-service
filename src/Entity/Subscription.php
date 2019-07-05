@@ -14,6 +14,7 @@ class Subscription
 {
     const STATUS_ACTIVE = 'active';
     const STATUS_NEW = 'new';
+    const STATUS_CANCELLED = 'cancelled';
 
     /**
      * @ORM\Id()
@@ -177,6 +178,11 @@ class Subscription
     {
         $this->status = self::STATUS_ACTIVE;
         $this->started_at = new \DateTime();
+    }
+
+    public function deactivate()
+    {
+        $this->status = self::STATUS_CANCELLED;
     }
 
     /**
